@@ -3,19 +3,19 @@ let mysql = require('mysql');
 const conf = require('./_conf.json');	//配置文件
 
 const db_test = conf.dbname.mysqltest;
-const testUser = mysql.escapeId(db_test.user);
+const testUser = mysql.escapeId(db_test + '.user');
 
 //建立数据库连接
 let connection = mysql.createConnection(conf.database);
 
 
 connect();
-createDb();
-selectDb();
-// deleteDb();
-createTable();
-// deleteTable();
-// insertOneToTable();
+//createDb();
+//selectDb();
+//deleteDb();
+//createTable();
+//deleteTable();
+//insertOneToTable();
 //insertSomeToTable();
 //queryFromTable();
 //updateData();
@@ -34,7 +34,7 @@ function createDb() {
 }
 
 //选择数据库
-function selectDb(){
+function selectDb() {
     let sql = `use ${db_test}`;
     connection.query(sql, (err, ...v) => {
         if (err) return console.error(err.message);
@@ -43,7 +43,7 @@ function selectDb(){
 }
 
 //删除数据库
-function deleteDb(){
+function deleteDb() {
     let sql = `drop database if exists ${db_test}`
     connection.query(sql, (err, ...v) => {
         if (err) return console.error(err.message);
@@ -73,6 +73,7 @@ function createTable() {
         id int primary key auto_increment,
         username varchar(255)not null,
         password varchar(255) not null)`;
+    console.log(testUser);
     connection.query(createUser, (err, results, fields) => {
         if (err) return console.error(err.message);
         //console.log('create table success');
@@ -82,7 +83,7 @@ function createTable() {
 
 //删除表
 function deleteTable() {
-    const deleteUser = `drop table if exists user `;
+    const deleteUser = `drop table if exists ${testUser} `;
     connection.query(deleteUser, (err, results, fields) => {
         if (err) return console.error(err.message);
         console.log('delete table success');
@@ -92,7 +93,7 @@ function deleteTable() {
 
 //插入一行数据
 function insertOneToTable() {
-    let sql = `insert into user(username,password)values(?,?)`;
+    let sql = `insert into ${testUser}(username,password)values(?,?)`;
     let data = ['pipi', '15966'];
     connection.query(sql, data, (err, results, fields) => {
         if (err) return console.error(err.message);
@@ -102,7 +103,7 @@ function insertOneToTable() {
 
 //插入若干条数据
 function insertSomeToTable() {
-    let sql = `insert into user(username,password)values ?`;
+    let sql = `insert into ${testUser}(username,password)values ?`;
     let data = [
         ['pipi1', '111111'],
         ['pipi2', '1212212'],
@@ -116,7 +117,7 @@ function insertSomeToTable() {
 
 //查询数据
 function queryFromTable() {
-    let sql = `select *from user where username = ? and id < ?`;
+    let sql = `select *from ${testUser} where username = ? and id < ?`;
     let data = ['pipi1', 5];
     connection.query(sql, data, (err, results, fields) => {
         if (err) return console.error(err.message);
@@ -126,7 +127,7 @@ function queryFromTable() {
 
 //更新数据
 function updateData() {
-    let sql = `update user set username = ? where id <= ?`;
+    let sql = `update ${testUser} set username = ? where id <= ?`;
     let data = ['fanfan', 3];
     connection.query(sql, data, (err, results, fields) => {
         if (err) return console.error(err.message);
@@ -136,7 +137,7 @@ function updateData() {
 
 //删除数据
 function deleteData() {
-    let sql = `delete from user where id = ?`;
+    let sql = `delete from ${testUser} where id = ?`;
     let data = [5];
     connection.query(sql, data, (err, results, fields) => {
         if (err) return console.error(err.message);
@@ -145,7 +146,7 @@ function deleteData() {
 }
 //清空数据
 function cleanData() {
-    let sql = `delete from user`;
+    let sql = `delete from ${testUser}`;
     connection.query(sql, (err, results, fields) => {
         if (err) return console.error(err.message);
         console.log(`删除了${results.affectedRows}条数据`);
